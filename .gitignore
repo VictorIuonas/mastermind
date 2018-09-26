@@ -1,0 +1,10 @@
+.idea/21Buttons.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+api/__pycache__/*
+mastermind/__pycache__/*
+mastermind/migrations/__pycache__/*
+mastermind/*.pyc
+.vscode/launch.json

@@ -1,0 +1,17 @@
+{
+    "python.unitTest.unittestArgs": [
+        "-v",
+        "-s",
+        ".",
+        "-p",
+        "test*.py"
+    ],
+    "python.unitTest.pyTestEnabled": true,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.unittestEnabled": false,
+    "python.unitTest.pyTestArgs": [
+        "api"
+    ],
+    "python.pythonPath": "/home/victor/anaconda3/envs/21Buttons/bin/python",
+    "python.linting.pylintEnabled": false
+}
