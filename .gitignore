@@ -8,3 +8,4 @@ mastermind/__pycache__/*
 mastermind/migrations/__pycache__/*
 mastermind/*.pyc
 .vscode/launch.json
+.vscode/settings.json
