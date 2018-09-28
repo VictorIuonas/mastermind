@@ -1,10 +1,7 @@
 from django.conf.urls import url, include
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import GameViewSet, CreateView, DetailsView
-
-#router = DefaultRouter()
-#router.register('games', GameViewSet, base_name = 'games')
+from .views import CreateView, DetailsView
 
 urlpatterns = [
     url(r'^game/$', CreateView.as_view(), name = 'create'),
