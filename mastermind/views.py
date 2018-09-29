@@ -10,7 +10,6 @@ class CreateView(generics.ListCreateAPIView):
     serializer_class = GameSerializer
 
     def create(self, request, *args, **kwargs):
-        print('is create called')
         game = Game()
         default_color = Color.Red
         game.peg1 = default_color

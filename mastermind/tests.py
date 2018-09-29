@@ -2,7 +2,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase, APIRequestFactory, APIClient
 from django.test import TestCase
 from django.urls import reverse
-from .models import Game, PegCombination, Color
+from .models import Game, Color
+from .services import GameFactory
 
 class ViewTestCase(TestCase):
     def setUp(self):
@@ -42,3 +43,15 @@ class ModelTestCase(TestCase):
         self.assertEqual(self.game.peg3, Color.Yellow)
         self.assertEqual(self.game.peg4, Color.Green)
 
+    def test_game_solution_choice(self):
+        print('all colors: ', list(Color))
+
+class SolutionGeneratorTestCase(TestCase):
+
+    def setUp(self):
+        self.factory = GameFactory()
+
+    def test_game_is_created_with_random_colors(self):
+        game = self.factory.create()
+
+        self.assertFalse(game.peg1 == game.peg2 == game.peg3 == game.peg4)
