@@ -1,6 +1,15 @@
 from .models import Game, Color
 from random import randint, seed
 
+def value_by_key_prefix(input_dict, prefix):
+    matches = [val for key, val in input_dict.iteritems() if key.startswith(prefix)]
+    if not matches:
+        raise KeyError(prefix)
+    if len(matches) > 1:
+        raise ValueError('{} matches more than one key'.format(prefix))
+
+    return matches[0]
+
 class GameFactory(object):
     
     def __init__(self):

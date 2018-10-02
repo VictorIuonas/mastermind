@@ -1,13 +1,30 @@
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase, APIRequestFactory, APIClient
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from .models import Game, Color
 from .services import GameFactory
+from .views import CreateGameView
 
-class ViewTestCase(TestCase):
+class ApiClientAuthenticator():
+    def __init__(self):
+        self.username = 'test'
+        self.email = 'john@doe.com'
+        self.password = '123'
+
+        User.objects.create(username = self.username, email = self.email, password = self.password)
+        self.user = User.objects.get(username = 'test')
+    
+    def authenticate(self, apiClient):
+        apiClient.force_authenticate(user = self.user)
+
+class CreateGameViewTestCase(APITestCase):
     def setUp(self):
+        self.authenticator = ApiClientAuthenticator()
         self.client = APIClient()
+        self.authenticator.authenticate(self.client)
         self.game_create_data = {}
         self.response = self.client.post(reverse('create'), self.game_create_data, format = 'json')
 
@@ -20,6 +37,20 @@ class ViewTestCase(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], 1)
+
+class CreateAttemptTestCase(TestCase):
+    def setUp(self):
+        self.base_scenario = CreateGameViewTestCase()
+        self.base_scenario.setUp()
+
+        self.game_id = self.base_scenario.response.data['id']
+        create_attempt_url = reverse('create_attempt', args = (self.game_id,))
+        
+        self.create_attempt_data = {'peg1': 'R', 'peg2': 'B', 'peg3': 'G', 'peg4': 'Y'}
+        self.create_attempt_response = self.base_scenario.client.post(create_attempt_url, self.create_attempt_data, format = 'json')
+    
+    def test_api_can_create_an_attempt(self):
+        self.assertEqual(self.create_attempt_response.status_code, status.HTTP_201_CREATED)
 
 class ModelTestCase(TestCase):
 

@@ -19,3 +19,13 @@ class Game(models.Model):
     def __str__(self):
         return "GamedId: {}".format(self.id)
 
+class Attempt(models.Model):
+    peg1 = EnumChoiceField(Color, default = Color.Green)
+    peg2 = EnumChoiceField(Color, default = Color.Green)
+    peg3 = EnumChoiceField(Color, default = Color.Green)
+    peg4 = EnumChoiceField(Color, default = Color.Green)
+
+    game = models.ForeignKey(Game, on_delete = models.CASCADE)
+    
+    def __str__(self):
+        return "Attempt for game {} values: {} {} {} {}".format(self.game.id, self.peg1, self.peg2, self.peg3, self.peg4)
