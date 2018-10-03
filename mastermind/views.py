@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 
 from .models import Game, Color, Attempt
 from .serializers import GameSerializer, ColorConverter, AttemptResponseSerilaizer
-from .services import value_by_key_prefix, GameFactory, AttemptResponseCalculator, GameHistoryCompiler
+from .services import value_by_key_prefix, GameFactory, AttemptResponseCalculator, GameHistoryCompiler, AttemptCompiler
 
 class CreateGameView(generics.ListCreateAPIView):
     queryset = Game.objects.all()
@@ -24,20 +24,14 @@ class CreateGameView(generics.ListCreateAPIView):
         
 class AttemptView(APIView):
     color_translator = ColorConverter()
+    attempt_compiler = AttemptCompiler()
     response_calculator = AttemptResponseCalculator()
     response_serializer = AttemptResponseSerilaizer
 
     def post(self, request, game_id):
-        attempt = Attempt()
-        attempt.game = Game.objects.get(id = game_id)
-        attempt.peg1 = self.color_translator.to_color(request.data['peg1'][0])
-        attempt.peg2 = self.color_translator.to_color(request.data['peg2'][0])
-        attempt.peg3 = self.color_translator.to_color(request.data['peg3'][0])
-        attempt.peg4 = self.color_translator.to_color(request.data['peg4'][0])
-        attempt.result = None
-        attempt.save()
-
+        attempt = self.attempt_compiler.build_attempt(request.data, Game.objects.get(id = game_id))
         response = self.response_calculator.calculate(attempt)
+
         response.save()
         attempt.result = response
         attempt.save()

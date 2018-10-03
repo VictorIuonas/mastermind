@@ -33,44 +33,6 @@ class GameFactory(object):
          
         return result
 
-class GameHistoryCompiler(object):
-    def __init__(self):
-        self.color_converter = ColorConverter()
-
-    def build_attempt_data(self, attempt):
-        result = {}
-
-        result['input'] = {
-            'peg1': self.color_converter.from_color(attempt.peg1),
-            'peg2': self.color_converter.from_color(attempt.peg2),
-            'peg3': self.color_converter.from_color(attempt.peg3),
-            'peg4': self.color_converter.from_color(attempt.peg4),
-        }
-
-        if attempt.result != None:
-            result['result'] = {
-                'response1': str(attempt.result.response1),
-                'response2': str(attempt.result.response2),
-                'response3': str(attempt.result.response3),
-                'response4': str(attempt.result.response4),
-            }
-
-        return result
-
-    def build_history(self, game_id):
-        result = {}
-
-        attempts_array = []
-
-        game_attempts = Attempt.objects.filter(game_id = game_id)
-
-        for attempt in game_attempts:
-            attempts_array.append(self.build_attempt_data(attempt))
-
-        result['attempts'] = attempts_array
-
-        return result
-
 class AttemptResponseCalculator(object):
     def generate_peg_list(self, peg_combo):
         result = []
@@ -106,5 +68,58 @@ class AttemptResponseCalculator(object):
             response_pegs.append(response)
 
         result = self.add_peg_list_to_response(response_pegs)
+
+        return result
+
+class AttemptCompiler(object):
+    def __init__(self):
+        self.color_converter = ColorConverter()
+
+    def build_attempt(self, raw_data, game):
+        attempt = Attempt()
+        attempt.game = game
+        attempt.peg1 = self.color_converter.to_color(raw_data['peg1'])
+        attempt.peg2 = self.color_converter.to_color(raw_data['peg2'])
+        attempt.peg3 = self.color_converter.to_color(raw_data['peg3'])
+        attempt.peg4 = self.color_converter.to_color(raw_data['peg4'])
+        attempt.result = None
+        return attempt
+
+
+class GameHistoryCompiler(object):
+    def __init__(self):
+        self.color_converter = ColorConverter()
+
+    def build_attempt_data(self, attempt):
+        result = {}
+
+        result['input'] = {
+            'peg1': self.color_converter.from_color(attempt.peg1),
+            'peg2': self.color_converter.from_color(attempt.peg2),
+            'peg3': self.color_converter.from_color(attempt.peg3),
+            'peg4': self.color_converter.from_color(attempt.peg4),
+        }
+
+        if attempt.result != None:
+            result['result'] = {
+                'response1': str(attempt.result.response1),
+                'response2': str(attempt.result.response2),
+                'response3': str(attempt.result.response3),
+                'response4': str(attempt.result.response4),
+            }
+
+        return result
+
+    def build_history(self, game_id):
+        result = {}
+
+        attempts_array = []
+
+        game_attempts = Attempt.objects.filter(game_id = game_id)
+
+        for attempt in game_attempts:
+            attempts_array.append(self.build_attempt_data(attempt))
+
+        result['attempts'] = attempts_array
 
         return result
