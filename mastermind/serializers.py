@@ -31,7 +31,14 @@ class AttemptSerializer(serializers.ModelSerializer):
 class ColorConverter():
 
     def __init__(self):
-        self.color_translator = { 'R': Color.Red, 'G': Color.Green, 'Y': Color.Yellow, 'B': Color.Blue, 'M': Color.Magenta, 'P': Color.Purple }
+        self.color_translator = { 
+            str(Color.Red): Color.Red, 
+            str(Color.Green): Color.Green, 
+            str(Color.Yellow): Color.Yellow, 
+            str(Color.Blue): Color.Blue, 
+            str(Color.Magenta): Color.Magenta, 
+            str(Color.Purple): Color.Purple 
+        }
         self.inverted_translator = {v: k for k, v in self.color_translator.items()}
     
     def to_color(self, input):
