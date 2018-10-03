@@ -4,8 +4,8 @@ from rest_framework.test import APITestCase, APIRequestFactory, APIClient
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
-from .models import Game, Color
-from .services import GameFactory
+from .models import Game, Color, Attempt, ResultColor
+from .services import GameFactory, AttemptResponseCalculator
 from .views import CreateGameView
 
 class ApiClientAuthenticator():
@@ -45,12 +45,18 @@ class CreateAttemptTestCase(TestCase):
 
         self.game_id = self.base_scenario.response.data['id']
         create_attempt_url = reverse('create_attempt', args = (self.game_id,))
-        
+
         self.create_attempt_data = {'peg1': 'R', 'peg2': 'B', 'peg3': 'G', 'peg4': 'Y'}
         self.create_attempt_response = self.base_scenario.client.post(create_attempt_url, self.create_attempt_data, format = 'json')
     
     def test_api_can_create_an_attempt(self):
         self.assertEqual(self.create_attempt_response.status_code, status.HTTP_201_CREATED)
+
+    def test_api_will_return_response(self):
+        self.assertTrue("response1" in self.create_attempt_response.data)
+        self.assertTrue("response2" in self.create_attempt_response.data)
+        self.assertTrue("response3" in self.create_attempt_response.data)
+        self.assertTrue("response4" in self.create_attempt_response.data)
 
 class ModelTestCase(TestCase):
 
@@ -86,3 +92,42 @@ class SolutionGeneratorTestCase(TestCase):
         game = self.factory.create()
 
         self.assertFalse(game.peg1 == game.peg2 == game.peg3 == game.peg4)
+
+class AttemptResponseCalculatorTestCase(TestCase):
+
+    def setUp(self):
+        self.calculator = AttemptResponseCalculator()
+        self.game = Game()
+        self.game.peg1 = Color.Blue
+        self.game.peg2 = Color.Green
+        self.game.peg3 = Color.Magenta
+        self.game.peg4 = Color.Purple
+        self.attempt = Attempt()
+        self.attempt.game = self.game
+
+    def test_calculator_returns_empty_response_for_an_attempt_not_matching_any(self):
+        self.attempt.peg1 = Color.Red
+        self.attempt.peg2 = Color.Yellow
+        self.attempt.peg3 = Color.Blue
+        self.attempt.peg4 = Color.Green
+
+        response = self.calculator.calculate(self.attempt)
+        
+        self.assertEqual(response.response1, None)
+        self.assertEqual(response.response2, None)
+        self.assertEqual(response.response3, ResultColor.White)
+        self.assertEqual(response.response4, ResultColor.White)
+
+    def test_calculator_returns_response_for_all_pegs_in_attempt_matching_the_solution(self):
+        self.attempt.peg1 = self.game.peg1
+        self.attempt.peg2 = self.game.peg2
+        self.attempt.peg3 = self.game.peg3
+        self.attempt.peg4 = self.game.peg4
+
+        response = self.calculator.calculate(self.attempt)
+
+        self.assertEqual(response.response1, ResultColor.Black)
+        self.assertEqual(response.response2, ResultColor.Black)
+        self.assertEqual(response.response3, ResultColor.Black)
+        self.assertEqual(response.response4, ResultColor.Black)
+        

@@ -1,4 +1,4 @@
-from .models import Game, Color, Attempt
+from .models import Game, Color, Attempt, AttemptResponse
 from rest_framework import serializers
 from enumchoicefield import EnumChoiceField
 
@@ -9,9 +9,15 @@ class GameSerializer(serializers.ModelSerializer):
         #fields = '__all__'
         fields = ('id',)
 
+class AttemptResponseSerilaizer(serializers.ModelSerializer):
+    class Meta:
+        model = AttemptResponse
+        fields = '__all__'
 
 class AttemptSerializer(serializers.ModelSerializer):
     game = GameSerializer(read_only = True)
+    result = AttemptResponseSerilaizer()
+
     class Meta:
         model = Attempt
         fields = '__all__'
