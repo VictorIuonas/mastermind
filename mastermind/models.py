@@ -3,12 +3,12 @@ from enum import Enum
 from enumchoicefield import ChoiceEnum, EnumChoiceField
 
 class Color(ChoiceEnum):
-    Red = "R"
-    Green = "G"
-    Yellow = "Y"
-    Blue = "B"
-    Magenta = "M"
-    Purple = "P"
+    Red = "Red"
+    Green = "Green"
+    Yellow = "Yellow"
+    Blue = "Blue"
+    Magenta = "Magenta"
+    Purple = "Purple"
 
 class ResultColor(ChoiceEnum):
     Black = "Black"
