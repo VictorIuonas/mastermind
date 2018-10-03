@@ -15,15 +15,17 @@ class ResultColor(ChoiceEnum):
     White = "White"
 
 class Game(models.Model):
+    # Future improvements: peg1 - peg4 should be an array
     peg1 = EnumChoiceField(Color, default = Color.Green)
     peg2 = EnumChoiceField(Color, default = Color.Green)
     peg3 = EnumChoiceField(Color, default = Color.Green)
     peg4 = EnumChoiceField(Color, default = Color.Green)
-
+    # Future improvement - I would add a boolean field in the response stating if the game was won or not
     def __str__(self):
         return "GamedId: {}".format(self.id)
 
 class AttemptResponse(models.Model):
+    # Future improvements: response1 - response4 should be an array
     response1 = EnumChoiceField(ResultColor, null = True, blank = True)
     response2 = EnumChoiceField(ResultColor, null = True, blank = True)
     response3 = EnumChoiceField(ResultColor, null = True, blank = True)
@@ -34,6 +36,7 @@ class AttemptResponse(models.Model):
 
 
 class Attempt(models.Model):
+    # Future improvements: peg1 - peg4 should be an array
     peg1 = EnumChoiceField(Color, default = Color.Green)
     peg2 = EnumChoiceField(Color, default = Color.Green)
     peg3 = EnumChoiceField(Color, default = Color.Green)

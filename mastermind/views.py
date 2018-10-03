@@ -43,6 +43,7 @@ class AttemptView(APIView):
             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class DetailsView(APIView):
+    # Future improvement - I would add a boolean field in the response stating if the game was won or not
     history_compiler = GameHistoryCompiler()
 
     def get(self, request, pk):
