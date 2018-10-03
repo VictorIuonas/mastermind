@@ -32,10 +32,18 @@ class ColorConverter():
 
     def __init__(self):
         self.color_translator = { 'R': Color.Red, 'G': Color.Green, 'Y': Color.Yellow, 'B': Color.Blue, 'M': Color.Magenta, 'P': Color.Purple }
+        self.inverted_translator = {v: k for k, v in self.color_translator.items()}
     
     def to_color(self, input):
         if input in self.color_translator:
             return self.color_translator[input]
         
         raise Exception('Unknown color: {}'.format(input))
+
+    def from_color(self, input):
+        if input in self.inverted_translator:
+            return self.inverted_translator[input]
+
+        raise Exception('Unknown color code: {}'.format(input))
+
     

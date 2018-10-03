@@ -1,4 +1,5 @@
 from .models import Game, Color, Attempt, AttemptResponse, ResultColor
+from .serializers import ColorConverter
 from random import randint, seed
 
 def value_by_key_prefix(input_dict, prefix):
@@ -30,6 +31,44 @@ class GameFactory(object):
         result.peg3 = selected_colors[2]
         result.peg4 = selected_colors[3]
          
+        return result
+
+class GameHistoryCompiler(object):
+    def __init__(self):
+        self.color_converter = ColorConverter()
+
+    def build_attempt_data(self, attempt):
+        result = {}
+
+        result['input'] = {
+            'peg1': self.color_converter.from_color(attempt.peg1),
+            'peg2': self.color_converter.from_color(attempt.peg2),
+            'peg3': self.color_converter.from_color(attempt.peg3),
+            'peg4': self.color_converter.from_color(attempt.peg4),
+        }
+
+        if attempt.result != None:
+            result['result'] = {
+                'response1': str(attempt.result.response1),
+                'response2': str(attempt.result.response2),
+                'response3': str(attempt.result.response3),
+                'response4': str(attempt.result.response4),
+            }
+
+        return result
+
+    def build_history(self, game_id):
+        result = {}
+
+        attempts_array = []
+
+        game_attempts = Attempt.objects.filter(game_id = game_id)
+
+        for attempt in game_attempts:
+            attempts_array.append(self.build_attempt_data(attempt))
+
+        result['attempts'] = attempts_array
+
         return result
 
 class AttemptResponseCalculator(object):
